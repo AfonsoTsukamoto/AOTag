@@ -2,7 +2,7 @@
 
 AOTag is under MIT Licence so if you find it helpful just use it !
 
-##This fork adds a delegate to know hoe many lines of tags are in the view. 
+##This fork adds a delegate to know how many lines of tags are in the view. 
 
 This is helpfull for the modified example, where the tag list view is the content of a scroll view.
 This allows your controller to know when to resize the content size of the scroll view.
