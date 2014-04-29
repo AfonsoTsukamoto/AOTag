@@ -30,6 +30,7 @@
 
 @property (retain) AOTagList *tag;
 @property (retain) NSMutableArray *randomTag;
+@property(nonatomic, strong) UIScrollView *scrollTag;
 
 @end
 
@@ -51,13 +52,23 @@
     [self resetRandomTagsName];
     
     self.tag = [[AOTagList alloc] initWithFrame:CGRectMake(0.0f,
-                                                           50.0f,
+                                                           0.0f,
                                                            320.0f,
-                                                           300.0f)];
+                                                           10.0f)];
     
     [self.tag setTagFont:@"Helvetica-Light" withSize:12.0f];
     [self.tag setDelegate:self];
-    [self.view addSubview:self.tag];
+    
+    UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                          50.0f,
+                                                                          320.0f,
+                                                                          15.0f)];
+    [scroll setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
+    scroll.backgroundColor = [UIColor greenColor];
+    [scroll addSubview:self.tag];
+    [scroll setContentSize:CGSizeMake(scroll.frame.size.width, 10)];
+    self.scrollTag = scroll;
+    [self.view addSubview:self.scrollTag];
 }
 
 - (void)didReceiveMemoryWarning
@@ -70,7 +81,7 @@
 {
     [self.tag removeAllTag];
     
-    self.randomTag = [NSMutableArray arrayWithArray:@[@{@"title": @"Tyrion", @"image": @"tyrion.jpg"}, @{@"title": @"Jaime", @"image": @"jaime.jpg"}, @{@"title": @"Robert", @"image": @"robert.jpg"}, @{@"title": @"Sansa", @"image": @"sansa.jpg"}, @{@"title": @"Arya", @"image": @"arya.jpg"}, @{@"title": @"Jon", @"image": @"john.jpg"}, @{@"title": @"Catelyn", @"image": @"catherine.jpg"}, @{@"title": @"Cersei", @"image": @"cersei.jpg"}]];
+    self.randomTag = [NSMutableArray arrayWithArray:@[@{@"title": @"Tyrion", @"image": @"tyrion.jpg"},@{@"title": @"Tyrion", @"image": @"tyrion.jpg"}, @{@"title": @"Jaime", @"image": @"jaime.jpg"}, @{@"title": @"Robert", @"image": @"robert.jpg"}, @{@"title": @"Sansa", @"image": @"sansa.jpg"}, @{@"title": @"Arya", @"image": @"arya.jpg"}, @{@"title": @"Arya", @"image": @"arya.jpg"}, @{@"title": @"Arya", @"image": @"arya.jpg"}, @{@"title": @"Jon", @"image": @"john.jpg"}, @{@"title": @"Catelyn", @"image": @"catherine.jpg"}, @{@"title": @"Cersei", @"image": @"cersei.jpg"}, @{@"title": @"Cersei", @"image": @"cersei.jpg"}, @{@"title": @"Cersei", @"image": @"cersei.jpg"}]];
 }
 
 - (NSUInteger)getRandomTagIndex
@@ -154,7 +165,7 @@
         NSInteger index = [self getRandomTagIndex];
         
         [self.tag addTag:[[self.randomTag objectAtIndex:index] valueForKey:@"title"]
-               withImagePlaceholder:[[self.randomTag objectAtIndex:index] valueForKey:@"image"]
+    withImagePlaceholder:[[self.randomTag objectAtIndex:index] valueForKey:@"image"]
             withImageURL:[NSURL URLWithString:@"https://identicons.github.com/e45c2d792a22e0ebe8488d42f4dc22d5.png"]
           withLabelColor:[UIColor blackColor]
      withBackgroundColor:[colors objectAtIndex:arc4random() % [colors count]]
@@ -184,6 +195,7 @@
 
 - (IBAction)removeAllTag:(id)sender
 {
+    [self.scrollTag setContentSize:CGSizeMake(320.0, 0.0)];
     [self resetRandomTagsName];
 }
 
@@ -207,6 +219,13 @@
 - (void)tagDidSelectTag:(AOTag *)tag
 {
     NSLog(@"Tag > %@ has been selected", tag);
+}
+
+-(void)numberOfLinesChangedTo:(NSUInteger)numberOfLines{
+    NSLog(@"%d", numberOfLines);
+    
+    [self.scrollTag setContentSize:CGSizeMake(self.scrollTag.frame.size.width, self.tag.frame.size.height + 40)];
+    [self.scrollTag scrollRectToVisible:CGRectMake(0, self.scrollTag.contentSize.height-1, 1,1) animated:YES];
 }
 
 #pragma mark - Tag delegate

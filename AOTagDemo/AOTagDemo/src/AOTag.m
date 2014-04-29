@@ -36,7 +36,7 @@
 
 @property (nonatomic, strong) NSNumber *tFontSize;
 @property (nonatomic, strong) NSString *tFontName;
-
+@property (nonatomic, readwrite) int numberOfLinesForView;
 @end
 
 @implementation AOTagList
@@ -53,6 +53,8 @@
         
         self.tFontSize = [NSNumber numberWithFloat:tagFontSize];
         self.tFontName = tagFontType;
+        
+        self.numberOfLinesForView = 0;
     }
     return self;
 }
@@ -63,14 +65,25 @@
     float x = 40.0f;
     float y = 0.0f;
     
+    int numberOfLines = 0;
+    
+    // Cleans the view
     for (id v in [self subviews])
         if ([v isKindOfClass:[AOTag class]])
             [v removeFromSuperview];
     
-    for (AOTag *tag in self.tags)
-    {
-        if (x + [tag getTagSize].width + tagMargin > self.frame.size.width) { n = 0; x = 40.0; y += [tag getTagSize].height + tagMargin; }
-        else x += (n ? tagMargin : 0.0f);
+    for (AOTag *tag in self.tags){
+        
+        if (x + [tag getTagSize].width + tagMargin > self.frame.size.width){
+            n = 0;
+            x = 40.0;
+            y += [tag getTagSize].height + tagMargin;
+            numberOfLines ++;
+        }else{
+            x += (n ? tagMargin : 0.0f);
+            
+            if(numberOfLines == 0) numberOfLines = 1;
+        }
         
         [tag setFrame:CGRectMake(x, y, [tag getTagSize].width, [tag getTagSize].height)];
         [self addSubview:tag];
@@ -83,6 +96,13 @@
     CGRect r = [self frame];
     r.size.height = y + tagHeight;
     [self setFrame:r];
+    
+    if(numberOfLines != self.numberOfLinesForView){
+        if([self.delegate respondsToSelector:@selector(numberOfLinesChangedTo:)]){
+            [self.delegate numberOfLinesChangedTo:(NSUInteger)numberOfLines];
+        }
+        self.numberOfLinesForView = numberOfLines;
+    }
 }
 
 - (void)setTagFont:(NSString *)name withSize:(CGFloat)size
@@ -224,7 +244,7 @@ withCloseButtonColor:(UIColor *)closeColor
     if ([self.tTitle respondsToSelector:@selector(drawAtPoint:withAttributes:)])
     {
         [self.tTitle drawInRect:CGRectMake(tagHeight + tagMargin, ([self getTagSize].height / 2.0f) - ([self getTagSize].height / 2.0f), [self getTagSize].width, [self getTagSize].height)
-             withAttributes:@{NSFontAttributeName:[UIFont fontWithName:self.tFontName size:[self.tFontSize floatValue]], NSForegroundColorAttributeName:self.tLabelColor}];
+                 withAttributes:@{NSFontAttributeName:[UIFont fontWithName:self.tFontName size:[self.tFontSize floatValue]], NSForegroundColorAttributeName:self.tLabelColor}];
     }
     else
     {

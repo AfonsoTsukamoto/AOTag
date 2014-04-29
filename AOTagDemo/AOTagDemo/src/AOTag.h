@@ -38,6 +38,7 @@
 - (void)tagDidRemoveTag:(AOTag *)tag;
 - (void)tagDidSelectTag:(AOTag *)tag;
 
+-(void)numberOfLinesChangedTo:(NSUInteger)numberOfLines;
 @end
 
 @interface AOTagList : UIView
