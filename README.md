@@ -2,6 +2,11 @@
 
 AOTag is under MIT Licence so if you find it helpful just use it !
 
+##This fork adds a delegate to know hoe many lines of tags are in the view. 
+
+This is helpfull for the modified example, where the tag list view is the content of a scroll view.
+This allows your controller to know when to resize the content size of the scroll view.
+
 ###**AOTagDemo**
 
 This project add/remove tag with image and title inside a tag list view. When user tap on a tag, it's removed from the view. Please see the sample project for more.
